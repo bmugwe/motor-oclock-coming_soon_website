@@ -42,6 +42,82 @@
   function display(days, hours, minutes, seconds) {}
 }
 
+const getTimeNow = () => {
+  const timeNow = new Date(); 
+
+const year = timeNow.getFullYear();
+const month = String(timeNow.getMonth() + 1).padStart(2, '0'); 
+const day = String(timeNow.getDate()).padStart(2, '0');
+
+const formattedDate = `${year}-${month}-${day}`;
+
+return formattedDate;
+}
+
+
+const SendtoDHIS = (event) => {
+  event.preventDefault();
+
+  const myHeaders = new Headers();
+  const originUrl = location.origin;
+  const emailInput = document.querySelector('input[name="email"]');
+  const emailValue = emailInput.value;
+  const encodedCredentials = 'ZGF0YWVudHJ5OjEyMzQ1NkBEYXRh';
+
+  const timeNow = getTimeNow();
+
+
+myHeaders.append("Accept", "application/json");
+myHeaders.append("Accept-Encoding", "gzip, deflate, br, zstd");
+myHeaders.append("Content-Type", "application/json");
+myHeaders.append("Connection", "keep-alive");
+myHeaders.append("Authorization", "Basic "+encodedCredentials);
+
+const raw = JSON.stringify({
+  "events": [
+    {
+      "occurredAt": timeNow,
+      "status": "COMPLETED",
+      "notes": [],
+      "completedAt": timeNow,
+      "program": "V428ghrDulJ",
+      "programStage": "j7rgrc8aU3q",
+      "orgUnit": "Hk5qXDPGMfk",
+      "dataValues": [
+        {
+          "dataElement": "i2p0tUCMNje",
+          "value": originUrl
+        },
+        {
+          "dataElement": "lcQjQOM9Ofz",
+          "value": "Maillist"
+        },
+        {
+          "dataElement": "rBpFToTyzph",
+          "value": emailValue
+        }
+      ]
+    }
+  ]
+});
+
+console.log({raw, myHeaders})
+
+const requestOptions = {
+  method: "POST",
+  headers: myHeaders,
+  body: raw,
+  redirect: "follow"
+};
+
+fetch("https://dhis.atsl.co.ke/api/40/tracker?async=false", requestOptions)
+  .then((response) => response.text())
+  .then((result) => console.log(result))
+  .catch((error) => console.error(error));
+
+  return false;
+}
+
 window.onload = function() {
     var preloader = document.getElementsByClassName('preloader')[0];
     setTimeout(function(){
