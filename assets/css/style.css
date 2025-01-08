@@ -306,3 +306,8 @@ opacity:1;
 		width: 75px;
 	}
 }
+
+#map-attr {
+	width: 100% !important;
+	padding: 5px;
+}
