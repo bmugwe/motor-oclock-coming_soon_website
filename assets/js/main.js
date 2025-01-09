@@ -111,8 +111,16 @@ const requestOptions = {
 };
 
 fetch("https://dhis.atsl.co.ke/api/40/tracker?async=false", requestOptions)
-  .then((response) => response.text())
-  .then((result) => console.log(result))
+  .then((response) => response.json())
+  .then((result) => {
+    if (result.status == "OK"){
+      alert('Success');
+      document.querySelector('input[name="email"]').value = '';
+    }else{
+      alert(`Error: ${result.status}`);
+      document.querySelector('input[name="email"]').value = '';
+    }
+  })
   .catch((error) => console.error(error));
 
   return false;
